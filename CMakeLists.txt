@@ -4,23 +4,24 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ProjectVersion.cmake)
 
 project(
-  my_project
-  LANGUAGES C CXX
+  coxeter
+  LANGUAGES CXX
   VERSION ${PROJECT_VERSION}
-  DESCRIPTION "My project")
+  DESCRIPTION "A library for n-dim geometry")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ProjectSettings.cmake)
 
-find_package(spdlog REQUIRED)
 find_package(Catch2 REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(CLI11 REQUIRED)
 
-file(GLOB_RECURSE ${PROJECT_NAME}_SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB_RECURSE ${PROJECT_NAME}_HEADER CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+set(XTENSOR_USE_XSIMD 1)
+set(XTENSOR_DISABLE_EXCEPTIONS 1)
+set(XTENSOR_USE_OPENMP 1)
+find_package(xtensor REQUIRED)
+find_package(xtensor-blas REQUIRED)
 
-add_subdirectory(external)
-add_subdirectory(src)
+file(GLOB_RECURSE ${PROJECT_NAME}_HEADER CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+
+add_subdirectory(include)
 add_subdirectory(tests)
 
 execute_process(

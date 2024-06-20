@@ -2,7 +2,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <stdfloat>
 #include <string>
+
+#include <xtensor/xarray.hpp>
 
 using u64 = uint64_t;
 using u32 = uint32_t;
@@ -14,8 +17,10 @@ using i32 = int32_t;
 using i16 = int16_t;
 using i8 = int8_t;
 
-using f64 = double;
-using f32 = float;
+using f128 = std::float128_t;
+using f64 = std::float64_t;
+using f32 = std::float32_t;
+using f16 = std::float16_t;
 
 using usize = size_t;
 using isize = ptrdiff_t;
@@ -69,6 +74,11 @@ constexpr auto operator"" _u64( unsigned long long int value ) noexcept -> u64
     return static_cast< u64 >( value );
 }
 
+constexpr auto operator"" _f16( long double value ) noexcept -> f16
+{
+    return static_cast< f16 >( value );
+}
+
 constexpr auto operator"" _f32( long double value ) noexcept -> f32
 {
     return static_cast< f32 >( value );
@@ -79,6 +89,54 @@ constexpr auto operator"" _f64( long double value ) noexcept -> f64
     return static_cast< f64 >( value );
 }
 
-namespace types {
+constexpr auto operator"" _f128( long double value ) noexcept -> f128
+{
+    return static_cast< f128 >( value );
+}
+
+namespace cx::types {
+
+// ---------------------------------------------------------------------------
+//
+//  Templates
+//
+// ---------------------------------------------------------------------------
+
+template< typename Scalar, usize N = 0 >
+struct MatType
+{
+    using type = typename std::conditional< N == 0, xt::xarray< Scalar >,
+        xt::xtensor_fixed< Scalar, xt::xshape< N, N > > >::type;
+};
+
+template< typename Scalar, usize N = 0 >
+struct VecType
+{
+    using type = typename std::conditional< N == 0, xt::xarray< Scalar >,
+        xt::xtensor_fixed< Scalar, xt::xshape< N > > >::type;
+};
+
+template< typename Scalar, usize N = 0 >
+using MatType_t = typename MatType< Scalar, N >::type;
+
+template< typename Scalar, usize N = 0 >
+using VecType_t = typename VecType< Scalar, N >::type;
+
+// ---------------------------------------------------------------------------
+//
+//  Types
+//
+// ---------------------------------------------------------------------------
+
+using Sca = f64;
+
+using Mat = MatType_t< Sca >;
+using Vec = VecType_t< Sca >;
+
+using Mat3 = MatType_t< Sca, 3 >;
+using Mat4 = MatType_t< Sca, 4 >;
+
+using Vec3 = VecType_t< Sca, 3 >;
+using Vec4 = VecType_t< Sca, 4 >;
 
 } // namespace types

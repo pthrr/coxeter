@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-namespace version {
+namespace cx::version {
 
 constexpr i8 PROJECT_VERSION_MAJOR{ 0 };
 constexpr i8 PROJECT_VERSION_MINOR{ 1 };
